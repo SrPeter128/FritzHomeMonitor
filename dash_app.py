@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.colors import qualitative
 
 DATA_DIR = Path(__file__).resolve().parent
-REFRESH_MS = 5000
+REFRESH_MS = 10000
 MAX_ROWS = 200000
 LOG_MIN_POWER = 0.1
 
@@ -108,7 +108,6 @@ def add_switch_markers(fig, df, label, color):
     off_mask = changes & (df["NewSwitchState"] == "OFF")
     x_values = build_time_axis(df)
     y_values = df.get("NewMultimeterPower", pd.Series([0] * len(df)))
-    print(y_values)
     if on_mask.any():
         fig.add_trace(
             go.Scatter(
@@ -207,8 +206,9 @@ def refresh_graphs(_, time_range):
         return empty, empty, empty, "Switch: —", "No device TSV files found."
 
     power_fig = make_empty_figure("Leistung (KW)")
-    energy_fig = make_empty_figure("Energie (KWh)")
     temp_fig = make_empty_figure("Temperatur (°C)")
+    energy_fig = make_empty_figure("Energie (KWh)")
+
     set_log_yaxis(power_fig)
     set_log_yaxis(energy_fig)
 
@@ -252,8 +252,8 @@ def refresh_graphs(_, time_range):
 
     return (
         power_fig,
-        energy_fig,
         temp_fig,
+        energy_fig,
         " | ".join(switch_state_parts) if switch_state_parts else "Switch: —",
         "",
     )

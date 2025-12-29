@@ -44,9 +44,14 @@ def write_device_tsv_per_device(devices, output_dir="."):
 if __name__ == "__main__":
    
     print("Starte Fritzmon...")
-    with open("login.crd", "r") as login:
-        login_data = login.read().split()
-    
+
+    try:
+        with open("login.crd", "r") as login:
+            login_data = login.read().split()
+    except Exception as e:
+        print("Fehler beim Lesen der Login-Daten:", e)
+        exit(1)
+
     fh = FritzHomeAutomation()
     fha = FritzHomeAutomation(address='192.168.178.1', user=login_data[0], password=login_data[1])
     
