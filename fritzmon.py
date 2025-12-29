@@ -1,5 +1,4 @@
 from multiprocessing.util import info
-from fritzconnection import FritzConnection
 from fritzconnection.lib.fritzhomeauto import FritzHomeAutomation
 from datetime import datetime
 import os
