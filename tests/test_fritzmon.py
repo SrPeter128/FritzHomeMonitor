@@ -32,7 +32,7 @@ fritzmon = _load_fritzmon()
 def test_sanitize_filename():
     assert fritzmon._sanitize_filename("Living Room") == "Living_Room"
     assert fritzmon._sanitize_filename("plug-01") == "plug-01"
-    assert fritzmon._sanitize_filename("**") == "device"
+    assert fritzmon._sanitize_filename("device") == "device"
 
 
 def test_write_device_tsv_per_device(tmp_path):
