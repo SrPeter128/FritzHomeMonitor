@@ -62,6 +62,7 @@ def make_empty_figure(title):
         template="plotly_dark",
         paper_bgcolor="#0f1117",
         plot_bgcolor="#0f1117",
+        uirevision="keep-zoom",
         height=260,
         margin=dict(l=40, r=20, t=40, b=40),
     )
