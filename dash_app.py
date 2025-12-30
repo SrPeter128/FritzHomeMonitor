@@ -138,7 +138,7 @@ def add_switch_markers(fig, df, label, color):
     prevent_initial_call=True,
 )
 def download_matthias(n_clicks):
-    return dcc.send_file(
+    return dcc.send_file( #TODO make this dynamic
         "./Matthias.tsv",
         "./Julius.tsv",
         "./FRITZ_Smart_Energy_250__3.tsv"
