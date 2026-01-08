@@ -7,6 +7,7 @@ from dash import dcc, html, Input, Output
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.colors import qualitative
+from dash import Dash, dcc, html, Input, Output, callback
 
 DATA_DIR = Path(__file__).resolve().parent
 REFRESH_MS = 10000
@@ -63,6 +64,7 @@ def make_empty_figure(title):
         template="plotly_dark",
         paper_bgcolor="#0f1117",
         plot_bgcolor="#0f1117",
+        uirevision="keep-zoom",
         height=260,
         margin=dict(l=40, r=20, t=40, b=40),
     )
@@ -151,6 +153,18 @@ def add_switch_markers(fig, df, label, color):
         )
 
 
+@callback(
+    Output("download-data", "data"),
+    Input("btn_data", "n_clicks"),
+    prevent_initial_call=True,
+)
+def download_matthias(n_clicks):
+    return dcc.send_file( #TODO make this dynamic
+        "./Matthias.tsv",
+        "./Julius.tsv",
+        "./FRITZ_Smart_Energy_250__3.tsv"
+    )
+
 app = dash.Dash(__name__)
 app.title = "Energy Monitor Live"
 
@@ -201,6 +215,8 @@ app.layout = html.Div(
                     id="switch-state",
                     style={"marginTop": "8px", "fontWeight": "bold", "color": "#d6dbef"},
                 ),
+                html.Button("Download Data", id="btn_data"),
+                dcc.Download(id="download-data"),
                 dcc.Graph(id="power-graph", figure=make_empty_figure("Power (mW)")),
                 dcc.Graph(id="energy-graph", figure=make_empty_figure("Energy (Wh)")),
                 dcc.Graph(id="temp-graph", figure=make_empty_figure("Temperature (0.1 °C)")),
