@@ -12,6 +12,7 @@ DATA_DIR = Path(__file__).resolve().parent
 REFRESH_MS = 10000
 MAX_ROWS = 200000
 LOG_MIN_POWER = 0.1
+MOVING_AVG_WINDOW = 10
 
 
 def list_device_files():
@@ -91,10 +92,30 @@ def build_time_axis(df):
     return list(range(len(df)))
 
 
-def add_series(fig, df, column, label):
+def add_series(fig, df, column, label, color=None):
     if column not in df.columns:
         return
-    fig.add_trace(go.Scatter(x=build_time_axis(df), y=df[column], mode="lines", name=label))
+    line = dict(color=color) if color else None
+    fig.add_trace(
+        go.Scatter(x=build_time_axis(df), y=df[column], mode="lines", name=label, line=line)
+    )
+
+
+def add_moving_average(fig, df, column, label, window, color):
+    if column not in df.columns:
+        return
+    if window < 2:
+        return
+    series = df[column].rolling(window=window, min_periods=1).mean()
+    fig.add_trace(
+        go.Scatter(
+            x=build_time_axis(df),
+            y=series,
+            mode="lines",
+            name=f"{label} MA ({window})",
+            line=dict(color=color, dash="dash"),
+        )
+    )
 
 
 def add_switch_markers(fig, df, label, color):
@@ -230,7 +251,15 @@ def refresh_graphs(_, time_range):
         power_max = df_power.get("NewMultimeterPower", pd.Series(dtype="float64")).max()
         if pd.notna(power_max):
             max_power = power_max if max_power is None else max(max_power, power_max)
-        add_series(power_fig, df_power, "NewMultimeterPower", label)
+        add_series(power_fig, df_power, "NewMultimeterPower", label, color=color)
+        add_moving_average(
+            power_fig,
+            df_power,
+            "NewMultimeterPower",
+            label,
+            MOVING_AVG_WINDOW,
+            color,
+        )
         add_switch_markers(power_fig, df_power, label, color)
         add_series(energy_fig, df, "NewMultimeterEnergy", label)
         add_series(temp_fig, df, "NewTemperatureCelsius", label)
