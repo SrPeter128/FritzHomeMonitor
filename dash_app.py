@@ -13,7 +13,7 @@ DATA_DIR = Path(__file__).resolve().parent
 REFRESH_MS = 10000
 MAX_ROWS = 200000
 LOG_MIN_POWER = 0.1
-MOVING_AVG_WINDOW = 10
+MOVING_AVG_WINDOW = 1000
 
 
 def list_device_files():
